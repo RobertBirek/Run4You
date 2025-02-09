@@ -276,8 +276,8 @@ def show_page():
                 st.session_state["predicted"]["yborn"] = st.session_state.yborn
                 st.session_state["predicted"]["time5km"] = st.session_state.time5km
                 st.session_state["predicted"]["tempo5k"] = seconds_to_time(int(predicted_tempo5k))
-                # motivation = generate_ai_motivation()
-                # st.session_state["predicted"]["motivation"] = motivation
+                motivation = generate_ai_motivation()
+                st.session_state["predicted"]["motivation"] = motivation
 
                 st.session_state.active_tab = "t3"
                 st.rerun()
