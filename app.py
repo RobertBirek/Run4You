@@ -1,11 +1,12 @@
 import streamlit as st
-import pandas as pd
 import os
 import glob
+import pathlib as Path
 from datetime import datetime
 from sites import menu, t1, t2, t3, t4
 
-LOCAL_RAW_FOLDER = "data/raw/"
+LOCAL_DATA_FOLDER = Path("data/")
+LOCAL_RAW_FOLDER = LOCAL_DATA_FOLDER / "raw/"
 
 st.set_page_config(page_title="Run4you",page_icon="logo.png")
 st.logo("logo.png")
@@ -35,7 +36,7 @@ def set_active_tab(tab_name):
 ###########################################
 def check_csv_files(folder_path):
     # Szukaj plików .csv w folderze
-    csv_files = glob.glob(os.path.join(folder_path, "*.csv"))
+    csv_files = glob.glob(os.path.join(LOCAL_RAW_FOLDER, "*.csv"))
   
     # Zwróć wynik
     return bool(csv_files), csv_files
