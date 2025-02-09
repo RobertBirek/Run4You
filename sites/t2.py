@@ -12,7 +12,8 @@ from langfuse.openai import OpenAI
 load_dotenv()
 
 # Połączenie z OpenAI
-# openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))  # ✅ POPRAWNE
+
 openai_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 # Inicjalizacja `session_state` dla `predicted`
@@ -224,50 +225,55 @@ def show_page():
     
 
     if st.button("Oblicz", use_container_width=True, type="primary", disabled=st.session_state.button_disabled):
-        with st.spinner("Generowanie wyniku..."):
-            # Konwersja płci (Kobieta = 0, Mężczyzna = 1)
-            gender_numeric = 0 if gender == "Kobieta" else 1
-            # Konwersja czasu na sekundy
-            time5_seconds = time_to_seconds(time5) # Czas w hh:mm:ss
-            
-            df_user = pd.DataFrame([{
-                'płeć': gender_numeric,
-                'rocznik': yborn,
-                '5_km_czas': time5_seconds  
-            }])
-            
-            df_user_min = pd.DataFrame([{
-                'płeć': gender_numeric,
-                'rocznik': yborn,
-                '5_km_czas': 600  
-            }])
-            # Wykonanie predykcji
-            predicted_place_5k = predict_results(df_user,MODEL_PATH_5KPLACE)
-            st.session_state["predicted"]["user_place_5k"] = int(f"{predicted_place_5k:.0f}")
-            predicted_place_5k_min = predict_results(df_user_min, MODEL_PATH_5KPLACE)
-            st.session_state["predicted"]["user_place_5k_min"] = int(f"{predicted_place_5k_min:.0f}")
-
-            # Wyświetlenie wyników
-            if predicted_place_5k is not None:
-                predicted_tempo5k = predict_results(df_user,MODEL_PATH_TEMPO)
-                st.session_state["predicted"]["user_tempo_5k"] = int(f"{predicted_tempo5k:.0f}")
-                df_user_tempo_5k = pd.DataFrame([{
+        # Sprawdzenie, czy model istnieje
+        if not os.path.exists(MODEL_PATH_5KPLACE + ".pkl"):
+            st.error("Model nie istnieje! Najpierw wygeneruj model.")
+            return None
+        else:
+            with st.spinner("Generowanie wyniku..."):
+                # Konwersja płci (Kobieta = 0, Mężczyzna = 1)
+                gender_numeric = 0 if gender == "Kobieta" else 1
+                # Konwersja czasu na sekundy
+                time5_seconds = time_to_seconds(time5) # Czas w hh:mm:ss
+                
+                df_user = pd.DataFrame([{
                     'płeć': gender_numeric,
                     'rocznik': yborn,
-                    'tempo': predicted_tempo5k  
+                    '5_km_czas': time5_seconds  
                 }])
-                predicted_place = predict_results(df_user_tempo_5k,MODEL_PATH_PLACE)
-                st.session_state["predicted"]["place"] = int(f"{predicted_place:.0f}")
-                # place = df_predicted_place = predict_results(df_user,MODEL_PATH_PLACE)
-                st.success(f"🎯 **Miejsce - Przewidywany wynik:** {predicted_place_5k:.0f} (na podstawie modelu ML){predicted_place_5k_min:.0f} Tempo: {seconds_to_time(predicted_tempo5k )}/km, {predicted_place:.0f}")
+                
+                df_user_min = pd.DataFrame([{
+                    'płeć': gender_numeric,
+                    'rocznik': yborn,
+                    '5_km_czas': 600  
+                }])
+                # Wykonanie predykcji
+                predicted_place_5k = predict_results(df_user,MODEL_PATH_5KPLACE)
+                st.session_state["predicted"]["user_place_5k"] = int(f"{predicted_place_5k:.0f}")
+                predicted_place_5k_min = predict_results(df_user_min, MODEL_PATH_5KPLACE)
+                st.session_state["predicted"]["user_place_5k_min"] = int(f"{predicted_place_5k_min:.0f}")
 
-            st.session_state["predicted"]["name"] = st.session_state.name
-            st.session_state["predicted"]["gender"] = st.session_state.gender
-            st.session_state["predicted"]["yborn"] = st.session_state.yborn
-            st.session_state["predicted"]["time5km"] = st.session_state.time5km
-            st.session_state["predicted"]["tempo5k"] = seconds_to_time(int(predicted_tempo5k))
-            motivation = generate_ai_motivation()
-            st.session_state["predicted"]["motivation"] = motivation
+                # Wyświetlenie wyników
+                if predicted_place_5k is not None:
+                    predicted_tempo5k = predict_results(df_user,MODEL_PATH_TEMPO)
+                    st.session_state["predicted"]["user_tempo_5k"] = int(f"{predicted_tempo5k:.0f}")
+                    df_user_tempo_5k = pd.DataFrame([{
+                        'płeć': gender_numeric,
+                        'rocznik': yborn,
+                        'tempo': predicted_tempo5k  
+                    }])
+                    predicted_place = predict_results(df_user_tempo_5k,MODEL_PATH_PLACE)
+                    st.session_state["predicted"]["place"] = int(f"{predicted_place:.0f}")
+                    # place = df_predicted_place = predict_results(df_user,MODEL_PATH_PLACE)
+                    st.success(f"🎯 **Miejsce - Przewidywany wynik:** {predicted_place_5k:.0f} (na podstawie modelu ML){predicted_place_5k_min:.0f} Tempo: {seconds_to_time(predicted_tempo5k )}/km, {predicted_place:.0f}")
 
-            st.session_state.active_tab = "t3"
-            st.rerun()
+                st.session_state["predicted"]["name"] = st.session_state.name
+                st.session_state["predicted"]["gender"] = st.session_state.gender
+                st.session_state["predicted"]["yborn"] = st.session_state.yborn
+                st.session_state["predicted"]["time5km"] = st.session_state.time5km
+                st.session_state["predicted"]["tempo5k"] = seconds_to_time(int(predicted_tempo5k))
+                motivation = generate_ai_motivation()
+                st.session_state["predicted"]["motivation"] = motivation
+
+                st.session_state.active_tab = "t3"
+                st.rerun()
