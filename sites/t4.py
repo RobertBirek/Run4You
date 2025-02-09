@@ -24,14 +24,17 @@ load_dotenv()
 
 
 # Foldery lokalne
-LOCAL_RAW_FOLDER = "data/raw/"
-LOCAL_CURRENT_FOLDER = "data/current/"
-LOCAL_BACKUP_FOLDER = "data/backup/"
+LOCAL_DATA_FOLDER = Path("data/")
+LOCAL_RAW_FOLDER = LOCAL_DATA_FOLDER / "raw/"
+LOCAL_CURRENT_FOLDER = LOCAL_DATA_FOLDER / "current/"
+LOCAL_BACKUP_FOLDER = LOCAL_DATA_FOLDER / "backup/"
 
 
 # Upewnienie się, że foldery istnieją
+os.makedirs(LOCAL_DATA_FOLDER, exist_ok=True)
 os.makedirs(LOCAL_RAW_FOLDER, exist_ok=True)
 os.makedirs(LOCAL_CURRENT_FOLDER, exist_ok=True)
+os.makedirs(LOCAL_BACKUP_FOLDER, exist_ok=True)
 
 # Ścieżki do modeli
 MODEL_PATH_5KPLACE = os.path.join(LOCAL_CURRENT_FOLDER, "model_5kplace")
