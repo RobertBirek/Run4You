@@ -11,9 +11,6 @@ from langfuse.openai import OpenAI
 
 load_dotenv()
 
-# inicjacja Langfuse
-lf = Langfuse()
-
 # Połączenie z OpenAI
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
