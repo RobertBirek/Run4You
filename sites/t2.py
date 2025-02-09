@@ -269,7 +269,7 @@ def show_page():
                     predicted_place = predict_results(df_user_tempo_5k,MODEL_PATH_PLACE)
                     st.session_state["predicted"]["place"] = int(f"{predicted_place:.0f}")
                     # place = df_predicted_place = predict_results(df_user,MODEL_PATH_PLACE)
-                    st.success(f"🎯 **Miejsce - Przewidywany wynik:** {predicted_place_5k:.0f} (na podstawie modelu ML){predicted_place_5k_min:.0f} Tempo: {seconds_to_time(predicted_tempo5k )}/km, {predicted_place:.0f}")
+                    # st.success(f"**Miejsce - Przewidywany wynik:** {predicted_place_5k:.0f} (na podstawie modelu ML){predicted_place_5k_min:.0f} Tempo: {seconds_to_time(predicted_tempo5k )}/km, {predicted_place:.0f}")
 
                 st.session_state["predicted"]["name"] = st.session_state.name
                 st.session_state["predicted"]["gender"] = st.session_state.gender
