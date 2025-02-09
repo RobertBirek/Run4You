@@ -1,4 +1,3 @@
 .env
-data
 sites/__pycache__
 logs.log
