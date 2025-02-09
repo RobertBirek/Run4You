@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 import glob
-import pathlib as Path
+from pathlib import Path
 from datetime import datetime
 from sites import menu, t1, t2, t3, t4
 
