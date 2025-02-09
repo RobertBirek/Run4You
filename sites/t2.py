@@ -5,11 +5,14 @@ import re
 import os
 from dotenv import load_dotenv
 from pycaret.regression import load_model, predict_model
-from openai import OpenAI
-#from langfuse.decorators import observe
-#from langfuse.openai import OpenAI
+# from openai import OpenAI 
+from langfuse.decorators import observe
+from langfuse.openai import OpenAI
 
 load_dotenv()
+
+# inicjacja Langfuse
+lf = Langfuse()
 
 # Połączenie z OpenAI
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -134,6 +137,7 @@ def predict_results(df,model_path,):
         st.error(f"Błąd podczas predykcji: {e}")
         return None
 ####################################
+@observe()
 def generate_ai_motivation(model: str = "gpt-4o-mini") -> str:
     try:
         if "predicted" in st.session_state:
@@ -173,8 +177,8 @@ def generate_ai_motivation(model: str = "gpt-4o-mini") -> str:
         # Wysłanie zapytania do OpenAI
         response = openai_client.chat.completions.create(
             model=model,
-            messages=messages
-        )
+            messages=messages,
+            name="motivation"        )
 
         # Pobranie odpowiedzi
         answer = response.choices[0].message.content

@@ -9,5 +9,5 @@ s3fs
 seaborn
 pycaret
 matplotlib
-sklearn
+scikit-learn
 langfuse
