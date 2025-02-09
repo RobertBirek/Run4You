@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime
 import re
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 from pycaret.regression import load_model, predict_model
 # from openai import OpenAI 
@@ -28,7 +29,10 @@ current_year = datetime.now().year
 years = list(range(1923, current_year - 15))
 
 # Folder na modele
-LOCAL_CURRENT_FOLDER = "data/current/"
+LOCAL_DATA_FOLDER = Path("data/")
+LOCAL_RAW_FOLDER = LOCAL_DATA_FOLDER / "raw/"
+LOCAL_CURRENT_FOLDER = LOCAL_DATA_FOLDER / "current/"
+LOCAL_BACKUP_FOLDER = LOCAL_DATA_FOLDER / "backup/"
 
 # Ścieżki do modeli
 MODEL_PATH_5KPLACE = os.path.join(LOCAL_CURRENT_FOLDER, "model_5kplace")
@@ -272,8 +276,11 @@ def show_page():
                 st.session_state["predicted"]["yborn"] = st.session_state.yborn
                 st.session_state["predicted"]["time5km"] = st.session_state.time5km
                 st.session_state["predicted"]["tempo5k"] = seconds_to_time(int(predicted_tempo5k))
-                motivation = generate_ai_motivation()
-                st.session_state["predicted"]["motivation"] = motivation
+                # motivation = generate_ai_motivation()
+                # st.session_state["predicted"]["motivation"] = motivation
 
                 st.session_state.active_tab = "t3"
                 st.rerun()
+
+                # st.write(st.session_state["predicted"].get("user_place_5k", None))
+                # st.write(st.session_state["predicted"].get("tempo5k", None))

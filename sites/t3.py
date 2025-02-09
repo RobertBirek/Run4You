@@ -13,8 +13,8 @@ if "predicted" in st.session_state:
         predicted_yborn = st.session_state["predicted"].get("yborn", None)
         predicted_time5k = st.session_state["predicted"].get("time5k", None)
         predicted_place_5k = st.session_state["predicted"].get("user_place_5k", None)
-        predicted_place_5k_min = st.session_state["predicted"].get("user_place_5k_min", None)
-        predicted_tempo5k = st.session_state["predicted"].get("tempo5k", None)
+        predicted_place_5k_min = st.session_state["predicted"].get("user_place_5k_min")
+        predicted_tempo5k = st.session_state["predicted"].get("tempo5k")
         predicted_place = st.session_state["predicted"].get("place", None)
         predict_motivation = st.session_state["predicted"].get("motivation", None)
 
