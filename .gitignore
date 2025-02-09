@@ -1,6 +1,4 @@
 .env
-.cache
-users
-sites/__pycache__
 data
+sites/__pycache__
 logs.log
