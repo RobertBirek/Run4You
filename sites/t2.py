@@ -12,7 +12,8 @@ from langfuse.openai import OpenAI
 load_dotenv()
 
 # Połączenie z OpenAI
-openai_client = OpenAI(api_key=os.environ("OPENAI_API_KEY"))
+# openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+openai_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 # Inicjalizacja `session_state` dla `predicted`
 if "predicted" not in st.session_state:
