@@ -2,15 +2,6 @@ import os
 import streamlit as st
 from dotenv import load_dotenv
 from datetime import datetime
-# from openai import OpenAI
-# #from langfuse.decorators import observe
-# #from langfuse.openai import OpenAI
-
-# load_dotenv()
-
-# # OPENAI_API_KEY=os.getenv("OPENAI_API_KEY")
-# openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
 
 gender_options = ["Kobieta", "Mężczyzna"]
 current_year = datetime.now().year
