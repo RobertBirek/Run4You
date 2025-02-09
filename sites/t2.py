@@ -144,15 +144,15 @@ def predict_results(df,model_path,):
 def generate_ai_motivation(model: str = "gpt-4o-mini") -> str:
     try:
         if "predicted" in st.session_state:
-            predicted_name = st.session_state["predicted"].get("name", None)
-            predicted_gender = st.session_state["predicted"].get("gender", None)
-            predicted_yborn = st.session_state["predicted"].get("yborn", None)
-            predicted_time5k = st.session_state["predicted"].get("time5k", None)
-            predicted_place_5k = st.session_state["predicted"].get("user_place_5k", None)
-            predicted_place_5k_min = st.session_state["predicted"].get("user_place_5k_min", None)
+            predicted_name = st.session_state["predicted"].get("name")
+            predicted_gender = st.session_state["predicted"].get("gender")
+            predicted_yborn = st.session_state["predicted"].get("yborn")
+            predicted_time5k = st.session_state["predicted"].get("time5k")
+            predicted_place_5k = st.session_state["predicted"].get("user_place_5k")
+            predicted_place_5k_min = st.session_state["predicted"].get("user_place_5k_min")
             # predicted_tempo5k = seconds_to_time(st.session_state["predicted"].get("user_tempo_5k", 0))
-            predicted_tempo5k = st.session_state["predicted"].get("tempo5k", None)
-            predicted_place = st.session_state["predicted"].get("place", None)
+            predicted_tempo5k = st.session_state["predicted"].get("tempo5k")
+            predicted_place = st.session_state["predicted"].get("place")
 
 
         persona = """

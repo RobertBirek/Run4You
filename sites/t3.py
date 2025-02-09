@@ -7,16 +7,17 @@ gender_options = ["Kobieta", "Mężczyzna"]
 current_year = datetime.now().year
 years = list(range(1923, current_year - 15))
 
+
 if "predicted" in st.session_state:
-        predicted_name = st.session_state["predicted"].get("name", None)
-        predicted_gender = st.session_state["predicted"].get("gender", None)
-        predicted_yborn = st.session_state["predicted"].get("yborn", None)
-        predicted_time5k = st.session_state["predicted"].get("time5k", None)
-        predicted_place_5k = st.session_state["predicted"].get("user_place_5k", None)
+        predicted_name = st.session_state["predicted"].get("name")
+        predicted_gender = st.session_state["predicted"].get("gender")
+        predicted_yborn = st.session_state["predicted"].get("yborn")
+        predicted_time5k = st.session_state["predicted"].get("time5k")
+        predicted_place_5k = st.session_state["predicted"].get("user_place_5k")
         predicted_place_5k_min = st.session_state["predicted"].get("user_place_5k_min")
         predicted_tempo5k = st.session_state["predicted"].get("tempo5k")
-        predicted_place = st.session_state["predicted"].get("place", None)
-        predict_motivation = st.session_state["predicted"].get("motivation", None)
+        predicted_place = st.session_state["predicted"].get("place")
+        predict_motivation = st.session_state["predicted"].get("motivation")
 
 
 ####################################
