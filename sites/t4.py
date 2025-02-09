@@ -548,7 +548,7 @@ def show_page():
         if "model_overwrite" not in st.session_state:
             st.session_state.model_overwrite = False #= not model_exists  # Jeśli model nie istnieje, automatycznie = True
         
-        st.write(st.session_state.model_overwrite)        
+        # st.write(st.session_state.model_overwrite)        
         
         ok = st.button("Przygotuj model", type="primary", use_container_width=True)
         if ok or st.session_state.model_overwrite == True:
