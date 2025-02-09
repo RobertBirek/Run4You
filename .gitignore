@@ -1,0 +1,7 @@
+.env
+.cache
+users
+sites/__pycache__
+sites
+data
+logs.log

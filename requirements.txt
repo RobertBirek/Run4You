@@ -1,0 +1,13 @@
+pandas
+numpy
+streamlit
+openai
+python-dotenv
+boto3
+fsspec
+s3fs
+seaborn
+pycaret
+matplotlib
+sklearn
+langfuse
