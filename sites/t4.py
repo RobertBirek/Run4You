@@ -391,9 +391,9 @@ def create_models():
         # df = df[df["rok"] == df["rok"].max()]
         # df = df.sample(n=1000, random_state=42)
         
-        df_place5k = df[['płeć', 'rocznik', '5_km_czas', 'miejsce']]
-        df_tempo5k = df[['płeć', 'rocznik', '5_km_czas', '5_km_tempo']]
-        df_place = df[['płeć', 'rocznik', 'tempo', 'miejsce']]
+        df_place5k = df[['płeć','rok', 'rocznik', '5_km_czas', 'miejsce']]
+        df_tempo5k = df[['płeć','rok', 'rocznik', '5_km_czas', '5_km_tempo']]
+        df_place = df[['płeć','rok', 'rocznik', 'tempo', 'miejsce']]
 
 
         st.write("Wykres danych do modelu")

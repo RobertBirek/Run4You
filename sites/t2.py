@@ -18,8 +18,8 @@ load_dotenv()
 openai_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 # Inicjalizacja `session_state` dla `predicted`
-if "predicted" not in st.session_state:
-    st.session_state["predicted"] = {}
+# if "predicted" not in st.session_state:
+#     st.session_state["predicted"] = {}
 
 # Opcje płci
 gender_options = ["Kobieta", "Mężczyzna"]
@@ -42,19 +42,15 @@ MODEL_PATH_PLACE = os.path.join(LOCAL_CURRENT_FOLDER, "model_place")
 ####################################
 def update_name():
     st.session_state.name = st.session_state.input_name
-    st.session_state["predicted"]["name"] = st.session_state.name
 ####################################
 def update_gender():
     st.session_state.gender = gender_options.index(st.session_state.selected_gender)
-    st.session_state["predicted"]["gender"] = st.session_state.gender
 ####################################
 def update_yborn():
     st.session_state.yborn = st.session_state.selected_yborn
-    st.session_state["predicted"]["yborn"] = st.session_state.yborn
 ####################################
 def update_time():
     st.session_state.time5km = st.session_state.input_time5km
-    st.session_state["predicted"]["time5km"] = st.session_state.time5km
 ####################################
 # Funkcja walidująca format czasu
 def validate_time_format(input_text):
@@ -160,8 +156,8 @@ def generate_ai_motivation(model: str = "gpt-4o-mini") -> str:
         pomagając im osiągnąć ich cele.   
         """.strip()
         question = f"""
-        Jednym z Twoich podopiecznych jest {predicted_name}, jest {predicted_gender}, jest z rocznika {predicted_yborn} który biega 5 km w czasie {predicted_time5k}.
-        Naiszybszy biegacz w jego kategorii biegnie 5 km w czasie {predicted_place_5k_min}.
+        Jednym z Twoich podopiecznych jest {predicted_name}, jest {predicted_gender}, jest z rocznika {predicted_yborn} który przygotowuje się do półmaratonu.
+        jego czas na 5 km wynosi {predicted_time5k}, a najszybszy zawodnik w jego kategorii biegnie 5 km w czasie {predicted_place_5k_min}.
         Według Twoich obliczeń, {predicted_name} powinien ukończyć bieg na miejscu {predicted_place_5k}, osiągając tempo {predicted_tempo5k}.
         Jeżeli {predicted_name} utrzyma tempo {predicted_tempo5k} przez cały bieg, to powinien ukończyć bieg na miejscu {predicted_place}.
         Jakie rady mógłbyś dać {predicted_name} przed biegiem?
@@ -229,6 +225,10 @@ def show_page():
     
 
     if st.button("Oblicz", use_container_width=True, type="primary", disabled=st.session_state.button_disabled):
+        # del st.session_state["predicted"]
+        # if "predicted" not in st.session_state:
+        #     st.session_state["predicted"] = {}
+
         # Sprawdzenie, czy model istnieje
         if not os.path.exists(MODEL_PATH_5KPLACE + ".pkl"):
             st.error("Model nie istnieje! Najpierw wygeneruj model.")
@@ -239,14 +239,16 @@ def show_page():
                 gender_numeric = 0 if gender == "Kobieta" else 1
                 # Konwersja czasu na sekundy
                 time5_seconds = time_to_seconds(time5) # Czas w hh:mm:ss
-                
+                year = datetime.now().year
                 df_user = pd.DataFrame([{
+                    'rok': year,
                     'płeć': gender_numeric,
                     'rocznik': yborn,
                     '5_km_czas': time5_seconds  
                 }])
                 
                 df_user_min = pd.DataFrame([{
+                    'rok': year,
                     'płeć': gender_numeric,
                     'rocznik': yborn,
                     '5_km_czas': 600  
@@ -262,25 +264,26 @@ def show_page():
                     predicted_tempo5k = predict_results(df_user,MODEL_PATH_TEMPO)
                     st.session_state["predicted"]["user_tempo_5k"] = int(f"{predicted_tempo5k:.0f}")
                     df_user_tempo_5k = pd.DataFrame([{
+                        'rok': year,
                         'płeć': gender_numeric,
                         'rocznik': yborn,
                         'tempo': predicted_tempo5k  
                     }])
                     predicted_place = predict_results(df_user_tempo_5k,MODEL_PATH_PLACE)
                     st.session_state["predicted"]["place"] = int(f"{predicted_place:.0f}")
-                    # place = df_predicted_place = predict_results(df_user,MODEL_PATH_PLACE)
                     # st.success(f"**Miejsce - Przewidywany wynik:** {predicted_place_5k:.0f} (na podstawie modelu ML){predicted_place_5k_min:.0f} Tempo: {seconds_to_time(predicted_tempo5k )}/km, {predicted_place:.0f}")
 
+                st.session_state["predicted"]["year"] = year
                 st.session_state["predicted"]["name"] = st.session_state.name
-                st.session_state["predicted"]["gender"] = st.session_state.gender
+                st.session_state["predicted"]["gender"] = gender_numeric
                 st.session_state["predicted"]["yborn"] = st.session_state.yborn
                 st.session_state["predicted"]["time5km"] = st.session_state.time5km
-                st.session_state["predicted"]["tempo5k"] = seconds_to_time(int(predicted_tempo5k))
+                st.session_state["predicted"]["tempo5k"] = seconds_to_time(predicted_tempo5k)
+                motivation = ""
                 motivation = generate_ai_motivation()
                 st.session_state["predicted"]["motivation"] = motivation
 
                 st.session_state.active_tab = "t3"
                 st.rerun()
 
-                # st.write(st.session_state["predicted"].get("user_place_5k", None))
-                # st.write(st.session_state["predicted"].get("tempo5k", None))
+                

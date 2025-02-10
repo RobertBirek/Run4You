@@ -1,27 +1,17 @@
-import os
 import streamlit as st
-from dotenv import load_dotenv
 from datetime import datetime
-
-gender_options = ["Kobieta", "Mężczyzna"]
-current_year = datetime.now().year
-years = list(range(1923, current_year - 15))
-
-
-if "predicted" in st.session_state:
-        predicted_name = st.session_state["predicted"].get("name")
-        predicted_gender = st.session_state["predicted"].get("gender")
-        predicted_yborn = st.session_state["predicted"].get("yborn")
-        predicted_time5k = st.session_state["predicted"].get("time5k")
-        predicted_place_5k = st.session_state["predicted"].get("user_place_5k")
-        predicted_place_5k_min = st.session_state["predicted"].get("user_place_5k_min")
-        predicted_tempo5k = st.session_state["predicted"].get("tempo5k")
-        predicted_place = st.session_state["predicted"].get("place")
-        predict_motivation = st.session_state["predicted"].get("motivation")
 
 
 ####################################
 def show_page():
+    gender_options = ["Kobieta", "Mężczyzna"]
+    current_year = datetime.now().year
+    years = list(range(1923, current_year - 15))
+    if "predicted" in st.session_state:
+        predicted_place_5k = st.session_state["predicted"]["user_place_5k"]
+        predicted_tempo5k = st.session_state["predicted"]["tempo5k"]
+        predicted_place = st.session_state["predicted"]["place"]
+        predict_motivation = st.session_state["predicted"]["motivation"]
     st.title("Oto Twój wynik")
     # st.header("Dla danych:")
     st.subheader("Jeżeli przystąpisz do biegu, posiadając parametry:")
@@ -53,7 +43,7 @@ def show_page():
         st.title("GRATULUJEMY!")
     txt = f"Twoje tempo na 5km to : ~{predicted_tempo5k}, jeżeli utrzymasz je przez cały bieg, to ukończysz go na miejscu {predicted_place}."
     st.write(txt)
-
     # Wyświetlenie odpowiedzi AI
-    st.subheader("Twoja indywidualna motywacja:")
-    st.markdown(st.session_state["predicted"]["motivation"], unsafe_allow_html=True)
+    if predict_motivation:
+        st.subheader("Twoja indywidualna motywacja:")
+        st.markdown(predict_motivation, unsafe_allow_html=True)
