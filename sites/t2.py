@@ -35,9 +35,15 @@ LOCAL_CURRENT_FOLDER = LOCAL_DATA_FOLDER / "current/"
 LOCAL_BACKUP_FOLDER = LOCAL_DATA_FOLDER / "backup/"
 
 # Ścieżki do modeli
-MODEL_PATH_5KPLACE = os.path.join(LOCAL_CURRENT_FOLDER, "model_5kplace")
-MODEL_PATH_TEMPO = os.path.join(LOCAL_CURRENT_FOLDER, "model_tempo")
-MODEL_PATH_PLACE = os.path.join(LOCAL_CURRENT_FOLDER, "model_place")
+PATH_MODEL_PLACE_TIME5K = os.path.join(LOCAL_CURRENT_FOLDER, "model_place_time5k")
+PATH_MODEL_PLACE5K_TIME5K = os.path.join(LOCAL_CURRENT_FOLDER, "model_place5k_time5k")
+PATH_MODEL_TEMPO5K_TIME5K = os.path.join(LOCAL_CURRENT_FOLDER, "model_tempo5k_time5k")
+PATH_MODEL_PLACE_TEMPO5K = os.path.join(LOCAL_CURRENT_FOLDER, "model_place_tempo5k")
+PATH_MODEL_TIME_TIME5K = os.path.join(LOCAL_CURRENT_FOLDER, "model_time_time5k")
+PATH_MODEL_PGROUP_TIME5K = os.path.join(LOCAL_CURRENT_FOLDER, "model_pgroup_time5k")
+
+PATH_MODEL_TIME5K_TEMPO5K = os.path.join(LOCAL_CURRENT_FOLDER, "model_time5k_tempo5k")
+
 
 ####################################
 def update_name():
@@ -138,17 +144,10 @@ def predict_results(df,model_path,):
 ####################################
 @observe()
 def generate_ai_motivation(model: str = "gpt-4o-mini") -> str:
+    
     try:
         if "predicted" in st.session_state:
-            predicted_name = st.session_state["predicted"].get("name")
-            predicted_gender = st.session_state["predicted"].get("gender")
-            predicted_yborn = st.session_state["predicted"].get("yborn")
-            predicted_time5k = st.session_state["predicted"].get("time5k")
-            predicted_place_5k = st.session_state["predicted"].get("user_place_5k")
-            predicted_place_5k_min = st.session_state["predicted"].get("user_place_5k_min")
-            # predicted_tempo5k = seconds_to_time(st.session_state["predicted"].get("user_tempo_5k", 0))
-            predicted_tempo5k = st.session_state["predicted"].get("tempo5k")
-            predicted_place = st.session_state["predicted"].get("place")
+            predicted = st.session_state["predicted"]
 
 
         persona = """
@@ -156,11 +155,11 @@ def generate_ai_motivation(model: str = "gpt-4o-mini") -> str:
         pomagając im osiągnąć ich cele.   
         """.strip()
         question = f"""
-        Jednym z Twoich podopiecznych jest {predicted_name}, jest {predicted_gender}, jest z rocznika {predicted_yborn} który przygotowuje się do półmaratonu.
-        jego czas na 5 km wynosi {predicted_time5k}, a najszybszy zawodnik w jego kategorii biegnie 5 km w czasie {predicted_place_5k_min}.
-        Według Twoich obliczeń, {predicted_name} powinien ukończyć bieg na miejscu {predicted_place_5k}, osiągając tempo {predicted_tempo5k}.
-        Jeżeli {predicted_name} utrzyma tempo {predicted_tempo5k} przez cały bieg, to powinien ukończyć bieg na miejscu {predicted_place}.
-        Jakie rady mógłbyś dać {predicted_name} przed biegiem?
+        Jednym z Twoich podopiecznych jest {predicted["name"]}, jest {predicted["gender"]}, jest z rocznika {predicted["yborn"]} który przygotowuje się do półmaratonu, który wynosi około 21 km.
+        jego czas na 5 km wynosi {predicted["time_5k"]}, a najszybszy zawodnik w jego kategorii biegnie 5 km w czasie {predicted["time_5k_min"]}.
+        Według Twoich obliczeń, {predicted["name"]} powinien ukończyć bieg na miejscu {predicted["place"]}, a w swojej kategorii na miejscu {predicted["place_group"]}.
+        Jeżeli {predicted["name"]} utrzyma tempo {predicted["name"]} przez cały bieg, to powinien ukończyć bieg na miejscu {predicted["name"]}.
+        Jakie rady mógłbyś dać {predicted["name"]} przed biegiem?
         Zmotywuj go do osiągnięcia jak najlepszego wyniku.
         odpowiedz w formacie markdown.
         """.strip()
@@ -225,12 +224,12 @@ def show_page():
     
 
     if st.button("Oblicz", use_container_width=True, type="primary", disabled=st.session_state.button_disabled):
-        # del st.session_state["predicted"]
-        # if "predicted" not in st.session_state:
-        #     st.session_state["predicted"] = {}
+        del st.session_state["predicted"]
+        if "predicted" not in st.session_state:
+            st.session_state["predicted"] = {}
 
         # Sprawdzenie, czy model istnieje
-        if not os.path.exists(MODEL_PATH_5KPLACE + ".pkl"):
+        if not os.path.exists(PATH_MODEL_PLACE_TIME5K + ".pkl"):
             st.error("Model nie istnieje! Najpierw wygeneruj model.")
             return None
         else:
@@ -254,31 +253,73 @@ def show_page():
                     '5_km_czas': 600  
                 }])
                 # Wykonanie predykcji
-                predicted_place_5k = predict_results(df_user,MODEL_PATH_5KPLACE)
-                st.session_state["predicted"]["user_place_5k"] = int(f"{predicted_place_5k:.0f}")
-                predicted_place_5k_min = predict_results(df_user_min, MODEL_PATH_5KPLACE)
-                st.session_state["predicted"]["user_place_5k_min"] = int(f"{predicted_place_5k_min:.0f}")
+                predicted_place_time5k = predict_results(df_user,PATH_MODEL_PLACE_TIME5K)
+                predicted_place5k_time5k = predict_results(df_user,PATH_MODEL_PLACE5K_TIME5K)
+                predicted_time_time5k = predict_results(df_user,PATH_MODEL_TIME_TIME5K)
+                st.session_state["predicted"]["time_sek"] = int(f"{predicted_time_time5k:.0f}")
+                predicted_place_group_time5k = predict_results(df_user,PATH_MODEL_PGROUP_TIME5K)
+                st.session_state["predicted"]["place"] = int(f"{predicted_place_time5k:.0f}")
+                st.session_state["predicted"]["place_5k"] = int(f"{predicted_place5k_time5k:.0f}")
+                st.session_state["predicted"]["place_group"] = int(f"{predicted_place_group_time5k:.0f}")
+               
+                predicted_placemin_time5k = predict_results(df_user_min, PATH_MODEL_PLACE_TIME5K)
+                # predicted_place5kmin_time5k = predict_results(df_user_min,PATH_MODEL_PLACE5K_TIME5K)
+                predicted_timemin_time5k = predict_results(df_user_min, PATH_MODEL_TIME_TIME5K)
+                predicted_placemin_group_time5k = predict_results(df_user_min,PATH_MODEL_PGROUP_TIME5K)
+                st.session_state["predicted"]["place_min"] = int(f"{predicted_placemin_time5k:.0f}")
+                # st.session_state["predicted"]["place_5k_min"] = int(f"{predicted_place5kmin_time5k:.0f}")
+                st.session_state["predicted"]["place_group_min"] = int(f"{predicted_placemin_group_time5k:.0f}")
+                
 
                 # Wyświetlenie wyników
-                if predicted_place_5k is not None:
-                    predicted_tempo5k = predict_results(df_user,MODEL_PATH_TEMPO)
-                    st.session_state["predicted"]["user_tempo_5k"] = int(f"{predicted_tempo5k:.0f}")
+                if predicted_place_time5k is not None:
+                    predicted_tempo_time5k = predict_results(df_user,PATH_MODEL_TEMPO5K_TIME5K)
+                    predicted_tempomin_time5k = predict_results(df_user_min,PATH_MODEL_TEMPO5K_TIME5K)
+                    # st.session_state["predicted"]["user_tempo_5k"] = int(f"{predicted_tempo5k:.0f}")
                     df_user_tempo_5k = pd.DataFrame([{
                         'rok': year,
                         'płeć': gender_numeric,
                         'rocznik': yborn,
-                        'tempo': predicted_tempo5k  
+                        'tempo': predicted_tempo_time5k  
                     }])
-                    predicted_place = predict_results(df_user_tempo_5k,MODEL_PATH_PLACE)
-                    st.session_state["predicted"]["place"] = int(f"{predicted_place:.0f}")
+                    predicted_place_tempo5k = predict_results(df_user_tempo_5k,PATH_MODEL_PLACE_TEMPO5K)
+                    st.session_state["predicted"]["place_tempo5k"] = int(f"{predicted_place_tempo5k:.0f}")
                     # st.success(f"**Miejsce - Przewidywany wynik:** {predicted_place_5k:.0f} (na podstawie modelu ML){predicted_place_5k_min:.0f} Tempo: {seconds_to_time(predicted_tempo5k )}/km, {predicted_place:.0f}")
 
+
+
+                    df_user_min2 = pd.DataFrame([{
+                        'rok': year,
+                        'płeć': gender_numeric,
+                        'rocznik': yborn,
+                        '5_km_tempo': predicted_tempomin_time5k  
+                    }])
+                    predicted_time5k_tempo5k = predict_results(df_user_min2,PATH_MODEL_TIME5K_TEMPO5K)
+                    st.session_state["predicted"]["time_5k_min"] = seconds_to_time(predicted_time5k_tempo5k)
+
+                    df_user_min3 = pd.DataFrame([{
+                        'rok': year,
+                        'płeć': gender_numeric,
+                        'rocznik': yborn,
+                        '5_km_czas': predicted_time5k_tempo5k  
+                    }])
+                    
+                    
+                    predicted_place5kmin_time5k = predict_results(df_user_min3,PATH_MODEL_PLACE5K_TIME5K)
+                    st.session_state["predicted"]["place_5k_min"] = int(f"{predicted_place5kmin_time5k:.0f}")
+
+
+                
                 st.session_state["predicted"]["year"] = year
                 st.session_state["predicted"]["name"] = st.session_state.name
-                st.session_state["predicted"]["gender"] = gender_numeric
+                st.session_state["predicted"]["gender"] = gender
                 st.session_state["predicted"]["yborn"] = st.session_state.yborn
-                st.session_state["predicted"]["time5km"] = st.session_state.time5km
-                st.session_state["predicted"]["tempo5k"] = seconds_to_time(predicted_tempo5k)
+                st.session_state["predicted"]["time_5k"] = st.session_state.time5km
+                st.session_state["predicted"]["tempo_5k"] = seconds_to_time(predicted_tempo_time5k)
+                st.session_state["predicted"]["tempo_5k_min"] = seconds_to_time(predicted_tempomin_time5k)
+                st.session_state["predicted"]["time"] = seconds_to_time(predicted_time_time5k)
+                st.session_state["predicted"]["time_min"] = seconds_to_time(predicted_timemin_time5k)
+               
                 motivation = ""
                 motivation = generate_ai_motivation()
                 st.session_state["predicted"]["motivation"] = motivation
@@ -286,4 +327,7 @@ def show_page():
                 st.session_state.active_tab = "t3"
                 st.rerun()
 
-                
+                # st.write(st.session_state["predicted"])
+
+                # predicted = st.session_state["predicted"]
+                # st.write(predicted["name"])

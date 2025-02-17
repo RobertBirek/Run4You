@@ -37,10 +37,14 @@ os.makedirs(LOCAL_CURRENT_FOLDER, exist_ok=True)
 os.makedirs(LOCAL_BACKUP_FOLDER, exist_ok=True)
 
 # Ścieżki do modeli
-MODEL_PATH_5KPLACE = os.path.join(LOCAL_CURRENT_FOLDER, "model_5kplace")
-MODEL_PATH_TEMPO = os.path.join(LOCAL_CURRENT_FOLDER, "model_tempo")
-MODEL_PATH_PLACE = os.path.join(LOCAL_CURRENT_FOLDER, "model_place")
+PATH_MODEL_PLACE_TIME5K = os.path.join(LOCAL_CURRENT_FOLDER, "model_place_time5k")
+PATH_MODEL_PLACE5K_TIME5K = os.path.join(LOCAL_CURRENT_FOLDER, "model_place5k_time5k")
+PATH_MODEL_TEMPO5K_TIME5K = os.path.join(LOCAL_CURRENT_FOLDER, "model_tempo5k_time5k")
+PATH_MODEL_PLACE_TEMPO5K = os.path.join(LOCAL_CURRENT_FOLDER, "model_place_tempo5k")
+PATH_MODEL_TIME_TIME5K = os.path.join(LOCAL_CURRENT_FOLDER, "model_time_time5k")
+PATH_MODEL_PGROUP_TIME5K = os.path.join(LOCAL_CURRENT_FOLDER, "model_pgroup_time5k")
 
+PATH_MODEL_TIME5K_TEMPO5K = os.path.join(LOCAL_CURRENT_FOLDER, "model_time5k_tempo5k")
 
 ENDPOINT_URL = f"https://fra1.digitaloceanspaces.com"
 BUCKET_NAME = "gotoit.robertbirek"
@@ -334,9 +338,11 @@ def clean_data(csv_files):
         st.error(f"Błąd podczas czyszczenia danych: {e}")
 ###########################################
 def create_model(df, target, model_path):
+    category_f = ['płeć','rok', 'rocznik']
     exp = setup(
             data= df,
             target= target,
+            categorical_features=category_f,
             session_id=132,
             verbose=False
         )
@@ -391,9 +397,14 @@ def create_models():
         # df = df[df["rok"] == df["rok"].max()]
         # df = df.sample(n=1000, random_state=42)
         
-        df_place5k = df[['płeć','rok', 'rocznik', '5_km_czas', 'miejsce']]
-        df_tempo5k = df[['płeć','rok', 'rocznik', '5_km_czas', '5_km_tempo']]
-        df_place = df[['płeć','rok', 'rocznik', 'tempo', 'miejsce']]
+        df_place_time5k = df[['rok','płeć', 'rocznik', '5_km_czas', 'miejsce']]
+        df_place5k_time5k = df[['rok','płeć', 'rocznik', '5_km_czas', '5_km_miejsce_open']]
+        df_tempo5k_time5k = df[['rok','płeć', 'rocznik', '5_km_czas', '5_km_tempo']]
+        df_place_tempo5k = df[['rok','płeć', 'rocznik', 'tempo', 'miejsce']]
+        df_time_time5k = df[['rok','płeć', 'rocznik', '5_km_czas', 'czas']]
+        df_pgoup_time5k = df[['rok','płeć', 'rocznik', '5_km_czas', 'kategoria_wiekowa_miejsce']]
+
+        df_time5k_tempo5k = df[['rok','płeć', 'rocznik', '5_km_tempo', '5_km_czas']]
 
 
         st.write("Wykres danych do modelu")
@@ -415,9 +426,15 @@ def create_models():
         st.pyplot(fig)
 
         ########################
-        create_model(df_place5k, "miejsce", MODEL_PATH_5KPLACE)
-        create_model(df_tempo5k, "5_km_tempo", MODEL_PATH_TEMPO)
-        create_model(df_place, "miejsce", MODEL_PATH_PLACE)
+        create_model(df_place_time5k, "miejsce", PATH_MODEL_PLACE_TIME5K)
+        create_model(df_place5k_time5k, "5_km_miejsce_open", PATH_MODEL_PLACE5K_TIME5K)
+        create_model(df_tempo5k_time5k, "5_km_tempo", PATH_MODEL_TEMPO5K_TIME5K)
+        create_model(df_place_tempo5k, "miejsce", PATH_MODEL_PLACE_TEMPO5K)
+        create_model(df_time_time5k, "czas", PATH_MODEL_TIME_TIME5K)
+        create_model(df_pgoup_time5k, "kategoria_wiekowa_miejsce", PATH_MODEL_PGROUP_TIME5K)
+
+        create_model(df_time5k_tempo5k, "5_km_czas", PATH_MODEL_TIME5K_TEMPO5K)
+
         ########################
         
     except Exception as e:
@@ -552,11 +569,12 @@ def show_page():
         
         ok = st.button("Przygotuj model", type="primary", use_container_width=True)
         if ok or st.session_state.model_overwrite == True:
-            model_exists = os.path.exists(f"{MODEL_PATH_5KPLACE}.pkl")
+            model_exists = os.path.exists(f"{PATH_MODEL_PLACE_TIME5K}.pkl")
             if model_exists and st.session_state.model_overwrite == False :
                 confirm_overwrite()
             elif not model_exists or st.session_state.model_overwrite == True:
                 if model_exists:
+                    pass
                     backup_models()  # Tworzenie backupu przed nadpisaniem
                     clear_current_folder()  # Czyszczenie folderu `current/`
 
