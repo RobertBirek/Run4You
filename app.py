@@ -5,6 +5,9 @@ from pathlib import Path
 from datetime import datetime
 from sites import menu, t1, t2, t3, t4
 
+import shutil
+total, used, free = shutil.disk_usage("/tmp")
+
 LOCAL_DATA_FOLDER = Path("data/")
 LOCAL_RAW_FOLDER = LOCAL_DATA_FOLDER / "raw/"
 LOCAL_CURRENT_FOLDER = LOCAL_DATA_FOLDER / "current/"
@@ -18,7 +21,10 @@ os.makedirs(LOCAL_BACKUP_FOLDER, exist_ok=True)
 
 st.set_page_config(page_title="Run4you",page_icon="logo.png")
 st.logo("logo.png")
-
+print(f"📂 Dostępne miejsce w `/tmp/`:")
+print(f"💾 Całkowita przestrzeń: {total / (1024**3):.2f} GB")
+print(f"📊 Wykorzystane: {used / (1024**3):.2f} GB")
+print(f"🟢 Wolne miejsce: {free / (1024**3):.2f} GB")
 ###########################################
 # Session state
 if "active_tab" not in st.session_state:
