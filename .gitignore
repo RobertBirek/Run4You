@@ -2,3 +2,4 @@
 sites/__pycache__
 logs.log
 data/backup
+data/current

@@ -83,7 +83,8 @@ def list_files_in_cloud():
         s3_client = boto3.client("s3", endpoint_url=ENDPOINT_URL)
         response = s3_client.list_objects_v2(Bucket=BUCKET_NAME)
         if "Contents" in response:
-            return [obj["Key"] for obj in response["Contents"]]
+            file_list = [obj["Key"] for obj in response["Contents"]]
+            return file_list
         else:
             return []
     except Exception as e:
@@ -112,6 +113,35 @@ def download_from_cloud(object_name,local_path):
     except Exception as e:
         st.error(f"Błąd podczas pobierania pliku z chmury: {e}")
         time.sleep(5)
+
+###################################
+# Funkcja do pobierania plików current z chmury do lokalnego folderu
+def download_current_from_cloud():
+    try:
+        s3_client = boto3.client("s3", endpoint_url=ENDPOINT_URL)
+        paginator = s3_client.get_paginator("list_objects_v2")
+        file_count = 0
+
+        for page in paginator.paginate(Bucket=BUCKET_NAME, Prefix="current/"):
+            if "Contents" in page:
+                for obj in page["Contents"]:
+                    s3_key = obj["Key"]  # Pełna ścieżka w S3
+                    file_name = os.path.basename(s3_key)  # Nazwa pliku
+                    local_path = os.path.join(LOCAL_CURRENT_FOLDER, file_name)  # Ścieżka lokalna
+
+                    # Pobranie pliku
+                    print(f"Pobieranie: {s3_key} -> {local_path}")
+                    s3_client.download_file(BUCKET_NAME, s3_key, local_path)
+                    file_count += 1
+
+        if file_count == 0:
+            print("Brak plików w `current/` na S3.")
+        else:
+            print(f"Pobrano {file_count} plików do `{LOCAL_CURRENT_FOLDER}`!")
+
+    except Exception as e:
+        print(f"Błąd pobierania plików z `current/`: {e}")
+
 ###################################
 # Funkcja do usuwania pliku z chmury
 def delete_file_from_cloud(object_name):
@@ -545,19 +575,42 @@ def show_page():
         cloud_files = list_files_in_cloud()
         if cloud_files:
             for file in cloud_files:
+                # Podział na prefix i nazwę pliku
+                prefix, file_name = os.path.split(file)
+
+                # Ustalenie katalogu lokalnego na podstawie prefixu
+                if prefix.startswith("current"):
+                    # local_path = os.path.join(LOCAL_CURRENT_FOLDER, file_name)
+                    local_path = LOCAL_CURRENT_FOLDER
+                elif prefix.startswith("raw"):
+                    # local_path = os.path.join(LOCAL_RAW_FOLDER, file_name)
+                    local_path = LOCAL_RAW_FOLDER
+                else:
+                    print(f"Pominięto plik `{file_name}` (nieznany prefix)")
+                    continue
+                
                 col1, col2, col3, col4 = st.columns([10,1, 1,1])
                 with col1:
                     st.text(file)
                 with col3:
-                    if st.button(f"🔽", key=f"download_{file}", help="Pobierz plik do programu"):
-                        download_from_cloud(file, os.path.join(LOCAL_RAW_FOLDER, os.path.basename(file)))
-                        st.rerun()
+                    if st.button(f"🔽", key=f"download_{file_name}", help="Pobierz plik do programu"):
+                        download_from_cloud(file, os.path.join(local_path, os.path.basename(file)))
+                        # download_from_cloud(file, local_path)
+                        
+                        # st.rerun()
                 with col4:
-                    if st.button("🗑️", key=f"delete_cloud_{file}", type="primary", help="Usuń plik z chmury"):
-                        delete_file_from_cloud(file)
-                        st.rerun()
+                    if st.button("🗑️", key=f"delete_cloud_{file_name}", type="primary", help="Usuń plik z chmury"):
+                        # delete_file_from_cloud(file)
+                        # st.rerun()
+                        pass
         else:
             st.write("Brak plików w chmurze.")
+
+        if st.button(f"Pobierz wszystkie", key=f"download_current", type="primary", use_container_width=True, help="Pobierz wszystkie plik do programu"):
+            with st.spinner("Kopiuję wszystkie pliki ..."):
+                download_current_from_cloud()
+            st.rerun()
+
     with u4:
         # Czyszczenie danych i tworzenie modelu
         st.header("Tworzenie modelu")
@@ -575,8 +628,8 @@ def show_page():
             elif not model_exists or st.session_state.model_overwrite == True:
                 if model_exists:
                     pass
-                    backup_models()  # Tworzenie backupu przed nadpisaniem
-                    clear_current_folder()  # Czyszczenie folderu `current/`
+                    # backup_models()  # Tworzenie backupu przed nadpisaniem
+                    # clear_current_folder()  # Czyszczenie folderu `current/`
 
                 with st.status("Tworzenie modelu..."):
                     st.subheader("Czyszczenie i przygotowywanie danych...")
