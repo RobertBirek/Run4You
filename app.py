@@ -76,11 +76,11 @@ if os.path.exists("/tmp/"):
     st.write(f"📊 Wykorzystane: {used / (1024**3):.2f} GB")
     st.write(f"🟢 Wolne miejsce: {free / (1024**3):.2f} GB")
     if os.access("/tmp/", os.W_OK):
-        print("✅ Można zapisywać w `/tmp/`")
+        st.write("✅ Można zapisywać w `/tmp/`")
     else:
-        print("❌ `/tmp/` jest tylko do odczytu!")
+        st.write("❌ `/tmp/` jest tylko do odczytu!")
 else:
-    print("❌ Katalog `/tmp/` NIE istnieje!")
+    st.write("❌ Katalog `/tmp/` NIE istnieje!")
 
 
 # Wywołanie menu
