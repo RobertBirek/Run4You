@@ -374,9 +374,10 @@ def create_model(df, target, model_path):
             target= target,
             categorical_features=category_f,
             session_id=132,
+            n_jobs=-2,  # Ograniczenie do 50% CPU
             verbose=False
         )
-    best_models = exp.compare_models(n_select=3)
+    best_models = exp.compare_models(n_select=3,n_jobs=-2)
     best_model = best_models[0] if isinstance(best_models, list) else best_models
     exp.plot_model(best_model, plot='error',display_format='streamlit')
     exp.plot_model(best_model, plot='feature',display_format='streamlit')
