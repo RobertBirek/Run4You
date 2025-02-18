@@ -25,7 +25,7 @@ current_year = datetime.now().year
 years = list(range(1923, current_year - 15))
 
 # Folder na modele
-LOCAL_DATA_FOLDER = Path("/tmp/")
+LOCAL_DATA_FOLDER = Path("data/")
 LOCAL_RAW_FOLDER = LOCAL_DATA_FOLDER / "raw/"
 LOCAL_CURRENT_FOLDER = LOCAL_DATA_FOLDER / "current/"
 LOCAL_BACKUP_FOLDER = LOCAL_DATA_FOLDER / "backup/"

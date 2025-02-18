@@ -8,7 +8,7 @@ from sites import menu, t1, t2, t3, t4
 import shutil
 
 
-LOCAL_DATA_FOLDER = Path("/tmp/")
+LOCAL_DATA_FOLDER = Path("data/")
 LOCAL_RAW_FOLDER = LOCAL_DATA_FOLDER / "raw/"
 LOCAL_CURRENT_FOLDER = LOCAL_DATA_FOLDER / "current/"
 LOCAL_BACKUP_FOLDER = LOCAL_DATA_FOLDER / "backup/"

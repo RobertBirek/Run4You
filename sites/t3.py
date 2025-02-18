@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # Foldery lokalne
-LOCAL_DATA_FOLDER = Path("/tmp/")
+LOCAL_DATA_FOLDER = Path("data/")
 LOCAL_RAW_FOLDER = LOCAL_DATA_FOLDER / "raw/"
 LOCAL_CURRENT_FOLDER = LOCAL_DATA_FOLDER / "current/"
 LOCAL_BACKUP_FOLDER = LOCAL_DATA_FOLDER / "backup/"
