@@ -1,4 +1,5 @@
 .env
 sites/__pycache__
 logs.log
+data
 tmp

@@ -69,19 +69,22 @@ exists, csv_files =  check_csv_files(LOCAL_RAW_FOLDER)
 if not exists and st.session_state.active_tab != "t4":
     show_missing_files_dialog()
 
-# if os.path.exists("/tmp/"):
-#     print("✅ Katalog `/tmp/` istnieje.")
-#     total, used, free = shutil.disk_usage("/tmp")
-#     st.write(f"📂 Dostępne miejsce w `/tmp/`:")
-#     st.write(f"💾 Całkowita przestrzeń: {total / (1024**3):.2f} GB")
-#     st.write(f"📊 Wykorzystane: {used / (1024**3):.2f} GB")
-#     st.write(f"🟢 Wolne miejsce: {free / (1024**3):.2f} GB")
-#     if os.access("/tmp/", os.W_OK):
-#         st.write("✅ Można zapisywać w `/tmp/`")
-#     else:
-#         st.write("❌ `/tmp/` jest tylko do odczytu!")
-# else:
-#     st.write("❌ Katalog `/tmp/` NIE istnieje!")
+# testdir = "/tmp/"
+testdir = "data/"
+os.makedirs(testdir, exist_ok=True)
+if os.path.exists(testdir):
+    st.write(f"✅ Katalog `{testdir}` istnieje.")
+    total, used, free = shutil.disk_usage(testdir)
+    st.write(f"📂 Dostępne miejsce w `{testdir}`:")
+    st.write(f"💾 Całkowita przestrzeń: {total / (1024**3):.2f} GB")
+    st.write(f"📊 Wykorzystane: {used / (1024**3):.2f} GB")
+    st.write(f"🟢 Wolne miejsce: {free / (1024**3):.2f} GB")
+    if os.access(testdir, os.W_OK):
+        st.write(f"✅ Można zapisywać w `{testdir}`")
+    else:
+        st.write(f"❌ `{testdir}` jest tylko do odczytu!")
+else:
+    st.write(f"❌ Katalog `{testdir}` NIE istnieje!")
 
 
 # Wywołanie menu
