@@ -6,7 +6,7 @@ from datetime import datetime
 from sites import menu, t1, t2, t3, t4
 
 import shutil
-total, used, free = shutil.disk_usage("/tmp")
+
 
 LOCAL_DATA_FOLDER = Path("data/")
 LOCAL_RAW_FOLDER = LOCAL_DATA_FOLDER / "raw/"
@@ -68,10 +68,20 @@ exists, csv_files =  check_csv_files(LOCAL_RAW_FOLDER)
 if not exists and st.session_state.active_tab != "t4":
     show_missing_files_dialog()
 
-st.write(f"📂 Dostępne miejsce w `/tmp/`:")
-st.write(f"💾 Całkowita przestrzeń: {total / (1024**3):.2f} GB")
-st.write(f"📊 Wykorzystane: {used / (1024**3):.2f} GB")
-st.write(f"🟢 Wolne miejsce: {free / (1024**3):.2f} GB")
+if os.path.exists("/tmp/"):
+    print("✅ Katalog `/tmp/` istnieje.")
+    total, used, free = shutil.disk_usage("/tmp")
+    st.write(f"📂 Dostępne miejsce w `/tmp/`:")
+    st.write(f"💾 Całkowita przestrzeń: {total / (1024**3):.2f} GB")
+    st.write(f"📊 Wykorzystane: {used / (1024**3):.2f} GB")
+    st.write(f"🟢 Wolne miejsce: {free / (1024**3):.2f} GB")
+    if os.access("/tmp/", os.W_OK):
+        print("✅ Można zapisywać w `/tmp/`")
+    else:
+        print("❌ `/tmp/` jest tylko do odczytu!")
+else:
+    print("❌ Katalog `/tmp/` NIE istnieje!")
+
 
 # Wywołanie menu
 menu.show_menu()
