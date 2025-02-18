@@ -21,10 +21,7 @@ os.makedirs(LOCAL_BACKUP_FOLDER, exist_ok=True)
 
 st.set_page_config(page_title="Run4you",page_icon="logo.png")
 st.logo("logo.png")
-print(f"📂 Dostępne miejsce w `/tmp/`:")
-print(f"💾 Całkowita przestrzeń: {total / (1024**3):.2f} GB")
-print(f"📊 Wykorzystane: {used / (1024**3):.2f} GB")
-print(f"🟢 Wolne miejsce: {free / (1024**3):.2f} GB")
+
 ###########################################
 # Session state
 if "active_tab" not in st.session_state:
@@ -70,6 +67,11 @@ exists, csv_files =  check_csv_files(LOCAL_RAW_FOLDER)
 # Jeśli pliki nie istnieją, wyświetl dialog
 if not exists and st.session_state.active_tab != "t4":
     show_missing_files_dialog()
+
+st.write(f"📂 Dostępne miejsce w `/tmp/`:")
+st.write(f"💾 Całkowita przestrzeń: {total / (1024**3):.2f} GB")
+st.write(f"📊 Wykorzystane: {used / (1024**3):.2f} GB")
+st.write(f"🟢 Wolne miejsce: {free / (1024**3):.2f} GB")
 
 # Wywołanie menu
 menu.show_menu()
