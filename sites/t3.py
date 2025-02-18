@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # Foldery lokalne
-LOCAL_DATA_FOLDER = Path("data/")
+LOCAL_DATA_FOLDER = Path("/tmp/")
 LOCAL_RAW_FOLDER = LOCAL_DATA_FOLDER / "raw/"
 LOCAL_CURRENT_FOLDER = LOCAL_DATA_FOLDER / "current/"
 LOCAL_BACKUP_FOLDER = LOCAL_DATA_FOLDER / "backup/"
@@ -51,7 +51,7 @@ def show_page():
             unsafe_allow_html=True,
         )
     with cc2:
-        st.image("puchar.png")
+        st.image("sites/puchar.png")
 
     cg1,cg2,cg3 = st.columns([3,6,3])
     with cg2:

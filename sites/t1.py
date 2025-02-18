@@ -7,7 +7,7 @@ def show_page():
         
         
     with c2:
-        st.image("puchar.png")
+        st.image("sites/puchar.png")
 
     st.header("Podaj swoje parametry, aby przewidzieć swoje miejsce na mecie. 🏁")
     st.text("Na podstawie wyników biegu z półmaratonu Wrocławskiego z lat 2023 - 2024")

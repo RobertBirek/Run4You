@@ -24,7 +24,7 @@ load_dotenv()
 
 
 # Foldery lokalne
-LOCAL_DATA_FOLDER = Path("data/")
+LOCAL_DATA_FOLDER = Path("/tmp/")
 LOCAL_RAW_FOLDER = LOCAL_DATA_FOLDER / "raw/"
 LOCAL_CURRENT_FOLDER = LOCAL_DATA_FOLDER / "current/"
 LOCAL_BACKUP_FOLDER = LOCAL_DATA_FOLDER / "backup/"
@@ -108,7 +108,7 @@ def download_from_cloud(object_name,local_path):
     try:
         s3_client = boto3.client("s3", endpoint_url=ENDPOINT_URL)
         s3_client.download_file(BUCKET_NAME, object_name, local_path)
-        st.toast(f"Plik {object_name} został pobrany do lokalnego folderu: {local_path}.")
+        st.toast(f"Plik {object_name} został pobrany do lokalnego folderu: {str(local_path)}.")
         time.sleep(3)
     except Exception as e:
         st.error(f"Błąd podczas pobierania pliku z chmury: {e}")
@@ -488,7 +488,7 @@ def confirm_overwrite():
 
 ###########################################
 def show_page():
-    u1,u2,u3,u4 = st.tabs(["Dane lokalne","Dane do modelu","Dane w chmurze","Tworzenie modelu"])
+    u1,u2,u21,u3,u4 = st.tabs(["Dane RAW","Dane CURRENT","Dane BACKUP","Dane w chmurze","Tworzenie modelu"])
     with u1:
         # Wyświetlanie plików lokalnych
         st.header("Pliki lokalne")
@@ -618,7 +618,6 @@ def show_page():
         if "model_overwrite" not in st.session_state:
             st.session_state.model_overwrite = False #= not model_exists  # Jeśli model nie istnieje, automatycznie = True
         
-        # st.write(st.session_state.model_overwrite)        
         
         ok = st.button("Przygotuj model", type="primary", use_container_width=True)
         if ok or st.session_state.model_overwrite == True:
@@ -627,9 +626,8 @@ def show_page():
                 confirm_overwrite()
             elif not model_exists or st.session_state.model_overwrite == True:
                 if model_exists:
-                    pass
-                    # backup_models()  # Tworzenie backupu przed nadpisaniem
-                    # clear_current_folder()  # Czyszczenie folderu `current/`
+                    backup_models()  # Tworzenie backupu przed nadpisaniem
+                    clear_current_folder()  # Czyszczenie folderu `current/`
 
                 with st.status("Tworzenie modelu..."):
                     st.subheader("Czyszczenie i przygotowywanie danych...")

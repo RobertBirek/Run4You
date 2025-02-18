@@ -8,7 +8,7 @@ from sites import menu, t1, t2, t3, t4
 import shutil
 
 
-LOCAL_DATA_FOLDER = Path("data/")
+LOCAL_DATA_FOLDER = Path("/tmp/")
 LOCAL_RAW_FOLDER = LOCAL_DATA_FOLDER / "raw/"
 LOCAL_CURRENT_FOLDER = LOCAL_DATA_FOLDER / "current/"
 LOCAL_BACKUP_FOLDER = LOCAL_DATA_FOLDER / "backup/"
@@ -19,8 +19,9 @@ os.makedirs(LOCAL_CURRENT_FOLDER, exist_ok=True)
 os.makedirs(LOCAL_BACKUP_FOLDER, exist_ok=True)
 
 
-st.set_page_config(page_title="Run4you",page_icon="logo.png")
-st.logo("logo.png")
+
+st.set_page_config(page_title="Run4you",page_icon="sites/logo.png")
+st.logo("sites/logo.png")
 
 ###########################################
 # Session state
@@ -47,7 +48,7 @@ def set_active_tab(tab_name):
 ###########################################
 def check_csv_files(folder_path):
     # Szukaj plików .csv w folderze
-    csv_files = glob.glob(os.path.join(LOCAL_RAW_FOLDER, "*.csv"))
+    csv_files = glob.glob(os.path.join(folder_path, "*.csv"))
   
     # Zwróć wynik
     return bool(csv_files), csv_files
@@ -55,7 +56,7 @@ def check_csv_files(folder_path):
 # Funkcja dialogowa informująca o braku plików
 @st.dialog("Brak plików CSV")
 def show_missing_files_dialog():
-    st.write("Nie znaleziono plików .csv w katalogu `data/raw/`.")
+    st.write(f"Nie znaleziono plików .csv w katalogu `{LOCAL_RAW_FOLDER}`.")
     st.write("Załaduj pliki z danymi maratonu")
     if st.button("OK"):
         st.session_state.active_tab = "t4"

@@ -9,7 +9,7 @@ def set_active_tab(tab_name):
 def show_menu():
     c1,c2,c3 = st.columns([3,1,3])
     with c2:
-        st.image("logo.png", caption="Run4You", use_container_width=True)
+        st.image("sites/logo.png", caption="Run4You", use_container_width=True)
 
     # Zapewnienie, że `active_tab` jest zainicjalizowane
     if "active_tab" not in st.session_state:
