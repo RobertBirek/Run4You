@@ -46,24 +46,24 @@ if "predicted" not in st.session_state:
 def set_active_tab(tab_name):
     st.session_state.active_tab = tab_name
 ###########################################
-def check_csv_files(folder_path):
-    # Szukaj plików .csv w folderze
-    csv_files = glob.glob(os.path.join(folder_path, "*.csv"))
+def check_files(folder_path):
+    # Szukaj plików .pkl w folderze
+    files = glob.glob(os.path.join(folder_path, "*.pkl"))
   
     # Zwróć wynik
-    return bool(csv_files), csv_files
+    return bool(files), files
 ###########################################
 # Funkcja dialogowa informująca o braku plików
-@st.dialog("Brak plików CSV")
+@st.dialog("Brak plików")
 def show_missing_files_dialog():
-    st.write(f"Nie znaleziono plików .csv w katalogu `{LOCAL_RAW_FOLDER}`.")
+    st.write(f"Nie znaleziono plików .pkl w katalogu `{LOCAL_CURRENT_FOLDER}`.")
     st.write("Załaduj pliki z danymi maratonu")
     if st.button("OK"):
         st.session_state.active_tab = "t4"
         st.rerun()
 
 ###########################################
-exists, csv_files =  check_csv_files(LOCAL_RAW_FOLDER)
+exists, csv_files =  check_files(LOCAL_CURRENT_FOLDER)
 
 # Jeśli pliki nie istnieją, wyświetl dialog
 if not exists and st.session_state.active_tab != "t4":

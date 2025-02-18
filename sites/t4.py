@@ -608,13 +608,11 @@ def show_page():
                 with col3:
                     if st.button(f"🔽", key=f"download_{file_name}", help="Pobierz plik do programu"):
                         download_from_cloud(file, os.path.join(local_path, os.path.basename(file)))
-                        # download_from_cloud(file, local_path)
-                        
-                        # st.rerun()
+                        st.rerun()
                 with col4:
                     if st.button("🗑️", key=f"delete_cloud_{file_name}", type="primary", help="Usuń plik z chmury"):
-                        delete_file_from_cloud(file)
-                        st.rerun()
+                        # delete_file_from_cloud(file)
+                        # st.rerun()
                         pass
         else:
             st.write("Brak plików w chmurze.")
