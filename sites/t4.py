@@ -115,32 +115,44 @@ def download_from_cloud(object_name,local_path):
         time.sleep(5)
 
 ###################################
-# Funkcja do pobierania plików current z chmury do lokalnego folderu
-def download_current_from_cloud():
+# Funkcja do pobierania plików z chmury do lokalnego folderu
+def download_all_from_cloud():
     try:
         s3_client = boto3.client("s3", endpoint_url=ENDPOINT_URL)
         paginator = s3_client.get_paginator("list_objects_v2")
         file_count = 0
 
-        for page in paginator.paginate(Bucket=BUCKET_NAME, Prefix="current/"):
+        for page in paginator.paginate(Bucket=BUCKET_NAME):
             if "Contents" in page:
                 for obj in page["Contents"]:
                     s3_key = obj["Key"]  # Pełna ścieżka w S3
                     file_name = os.path.basename(s3_key)  # Nazwa pliku
-                    local_path = os.path.join(LOCAL_CURRENT_FOLDER, file_name)  # Ścieżka lokalna
+                    prefix = os.path.dirname(s3_key)  # Prefix (np. "current" lub "raw")
+                    
+                    # Wybór lokalnej ścieżki na podstawie prefixu
+                    if prefix.startswith("current"):
+                        local_path = LOCAL_CURRENT_FOLDER
+                    elif prefix.startswith("raw"):
+                        local_path = LOCAL_RAW_FOLDER
+                    else:
+                        st.write(f"Pominięto plik `{s3_key}` (nieznany prefix)")
+                        continue
+                             
+                    
+                    local_path = os.path.join(local_path, file_name)  # Ścieżka lokalna
 
                     # Pobranie pliku
-                    print(f"Pobieranie: {s3_key} -> {local_path}")
+                    st.write(f"Pobieranie: {s3_key} -> {local_path}")
                     s3_client.download_file(BUCKET_NAME, s3_key, local_path)
                     file_count += 1
 
         if file_count == 0:
-            print("Brak plików w `current/` na S3.")
+            st.write("Brak plików na S3.")
         else:
-            print(f"Pobrano {file_count} plików do `{LOCAL_CURRENT_FOLDER}`!")
+            st.write(f"Pobrano {file_count} plików !")
 
     except Exception as e:
-        print(f"Błąd pobierania plików z `current/`: {e}")
+        st.write(f"Błąd pobierania plików z `current/`: {e}")
 
 ###################################
 # Funkcja do usuwania pliku z chmury
@@ -609,7 +621,7 @@ def show_page():
 
         if st.button(f"Pobierz wszystkie", key=f"download_current", type="primary", use_container_width=True, help="Pobierz wszystkie plik do programu"):
             with st.spinner("Kopiuję wszystkie pliki ..."):
-                download_current_from_cloud()
+                download_all_from_cloud()
             st.rerun()
 
     with u4:
