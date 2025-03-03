@@ -97,7 +97,8 @@ def list_files_in_cloud():
 def upload_to_cloud(local_path, object_name):
     try:
         s3_client = boto3.client("s3", endpoint_url=ENDPOINT_URL)
-        s3_client.upload_file(local_path,BUCKET_NAME, object_name)
+        new_object_name = "run4you/" + object_name
+        s3_client.upload_file(local_path,BUCKET_NAME, new_object_name)
         st.toast(f"Plik {local_path} został przesłany do chmury jako {object_name}.")
         time.sleep(3)
     except Exception as e:
@@ -108,7 +109,8 @@ def upload_to_cloud(local_path, object_name):
 def download_from_cloud(object_name,local_path):
     try:
         s3_client = boto3.client("s3", endpoint_url=ENDPOINT_URL)
-        s3_client.download_file(BUCKET_NAME, object_name, local_path)
+        object_name_with_prefix = "run4you/" + object_name
+        s3_client.download_file(BUCKET_NAME, object_name_with_prefix, local_path)
         st.toast(f"Plik {object_name} został pobrany do lokalnego folderu: {str(local_path)}.")
         time.sleep(3)
     except Exception as e:
@@ -123,7 +125,7 @@ def download_all_from_cloud():
         paginator = s3_client.get_paginator("list_objects_v2")
         file_count = 0
 
-        for page in paginator.paginate(Bucket=BUCKET_NAME):
+        for page in paginator.paginate(Bucket=BUCKET_NAME, Prefix="run4you/"):
             if "Contents" in page:
                 for obj in page["Contents"]:
                     s3_key = obj["Key"]  # Pełna ścieżka w S3
