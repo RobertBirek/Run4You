@@ -125,12 +125,16 @@ def download_all_from_cloud():
         paginator = s3_client.get_paginator("list_objects_v2")
         file_count = 0
 
-        for page in paginator.paginate(Bucket=BUCKET_NAME):
+        for page in paginator.paginate(Bucket=BUCKET_NAME, Prefix="run4you/"):
             if "Contents" in page:
                 for obj in page["Contents"]:
                     s3_key = obj["Key"]  # Pełna ścieżka w S3
-                    file_name = os.path.basename(s3_key)  # Nazwa pliku
-                    prefix = os.path.dirname(s3_key)  # Prefix (np. "current" lub "raw")
+
+                    # Usuwamy prefiks "run4you/" aby uzyskać względną ścieżkę
+                    relative_key = s3_key.replace("run4you/", "", 1)
+
+                    file_name = os.path.basename(relative_key)  # Nazwa pliku
+                    prefix = os.path.dirname(relative_key)  # Prefix (np. "current" lub "raw")
                     
                     # Wybór lokalnej ścieżki na podstawie prefixu
                     if prefix.startswith("current"):
