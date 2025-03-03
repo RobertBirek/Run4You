@@ -81,9 +81,10 @@ def list_files_locally(folder):
 def list_files_in_cloud():
     try:
         s3_client = boto3.client("s3", endpoint_url=ENDPOINT_URL)
-        response = s3_client.list_objects_v2(Bucket=BUCKET_NAME)
+        response = s3_client.list_objects_v2(Bucket=BUCKET_NAME, Prefix="run4you/")
         if "Contents" in response:
-            file_list = [obj["Key"] for obj in response["Contents"]]
+            # file_list = [obj["Key"] for obj in response["Contents"]]
+            file_list = [obj["Key"].replace("run4you/", "", 1) for obj in response["Contents"]]
             return file_list
         else:
             return []
