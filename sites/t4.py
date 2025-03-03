@@ -125,7 +125,7 @@ def download_all_from_cloud():
         paginator = s3_client.get_paginator("list_objects_v2")
         file_count = 0
 
-        for page in paginator.paginate(Bucket=BUCKET_NAME, Prefix="run4you/"):
+        for page in paginator.paginate(Bucket=BUCKET_NAME):
             if "Contents" in page:
                 for obj in page["Contents"]:
                     s3_key = obj["Key"]  # Pełna ścieżka w S3
